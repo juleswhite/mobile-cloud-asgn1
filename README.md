@@ -1,4 +1,4 @@
-# Assignment 1 Covering Weeks 1-3
+# Assignment 1
 
 ## Running the Application
 
