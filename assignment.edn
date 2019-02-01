@@ -2,7 +2,6 @@
   :autograder.client.handin/assignment-id             "asgn1"
   :autograder.client.handin/assignment-repo           "https://github.com/juleswhite/mobile-cloud-asgn1.git"
   :autograder.client.handin/assignment-submission-url "https://sg2tkysai5.execute-api.us-east-1.amazonaws.com/dev/submit"
-  :autograder.client.handin/student-id                "bob_jones"
   :autograder.client.handin/sources                   ["src/"]
   :autograder.client.handin/assignment-home           "./"
   :autograder.client.handin/autograder-home           "./.autograder/"}

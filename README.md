@@ -21,12 +21,6 @@ for uploading video to a cloud service and managing the video's metadata.
 Once you are able to build this basic type of infrastructure, you will have
 the core knowledge needed to create much more sophisticated cloud services.
 
-## Before You Start
-
-Open the "assignment.edn" file in the root of the project directory and replace "bob_jones"
-with your Coursera username. Do not put your password into this file or change any other lines.
-To open the file in Eclipse, righ-click on the file, "Open With", "Text Editor".
-
 
 ## Instructions
 
