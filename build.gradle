@@ -3,7 +3,7 @@ buildscript {
 		springBootVersion = '2.1.0.RELEASE'
 	}
     repositories {
-        maven { url "http://repo.spring.io/libs-snapshot" }
+        maven { url "https://repo.spring.io/libs-snapshot" }
         mavenLocal()
     }
     dependencies {
@@ -27,7 +27,7 @@ war {
 
 repositories {
     mavenCentral()
-    maven { url "http://repo.spring.io/libs-snapshot" }
+    maven { url "https://repo.spring.io/libs-snapshot" }
     maven { url "http://maven.springframework.org/milestone" }
     
     flatDir {
