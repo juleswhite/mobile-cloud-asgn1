@@ -4,4 +4,4 @@
   :autograder.client.handin/assignment-submission-url "https://sg2tkysai5.execute-api.us-east-1.amazonaws.com/dev/submit"
   :autograder.client.handin/sources                   ["src/"]
   :autograder.client.handin/assignment-home           "./"
-  :autograder.client.handin/autograder-home           "./.autograder/"}
+  :autograder.client.handin/autograder-home           "./"}
