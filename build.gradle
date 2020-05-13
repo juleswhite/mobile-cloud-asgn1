@@ -36,6 +36,8 @@ dependencies {
     implementation(":autograder.handin:1.0.0")
     implementation(":autograder.spec:1.0.0")
     
+    implementation("junit:junit")
+    
 	
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
