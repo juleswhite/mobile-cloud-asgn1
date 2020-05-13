@@ -1,70 +1,45 @@
-buildscript {
-	ext {
-		springBootVersion = '2.1.0.RELEASE'
-	}
-    repositories {
-        maven { url "https://repo.spring.io/libs-snapshot" }
-        mavenLocal()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.2.RELEASE")
-    }
+plugins {
+	id 'org.springframework.boot' version '2.2.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-apply plugin: 'war'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-war {
-    baseName = 'gs-convert-jar-to-war'
-    version =  '0.1.0'
-}
+group = 'org.magnum.dataup'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
-    mavenCentral()
-    maven { url "https://repo.spring.io/libs-snapshot" }
-    maven { url "http://maven.springframework.org/milestone" }
-    
-    flatDir {
+	mavenCentral()
+	
+	flatDir {
     	dirs 'lib'
     }
 }
 
 dependencies {
-
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-aop")
-    compile("org.springframework.boot:spring-boot-starter-test")
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("org.springframework.data:spring-data-rest-webmvc")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	
+    implementation("org.apache.httpcomponents:httpclient:4.5.6")
     
     
-    compile("org.apache.httpcomponents:httpclient:4.5.6")
+    implementation("org.hsqldb:hsqldb")
     
+    implementation("com.google.guava:guava:17.0")
+    implementation("org.apache.commons:commons-lang3:3.3.2")
+    implementation("com.squareup.retrofit:retrofit:1.6.0")
+    implementation("commons-io:commons-io:2.4")
     
-    compile("org.hsqldb:hsqldb")
+    implementation("com.github.davidmarquis:fluent-interface-proxy:1.3.0")
+    implementation(":mobilecloud.handin:1.0.0")
+    implementation(":video.up.test:1.0.0")
+    implementation(":autograder.handin:1.0.0")
+    implementation(":autograder.spec:1.0.0")
     
-    compile("com.google.guava:guava:17.0")
-    compile("org.apache.commons:commons-lang3:3.3.2")
-    compile("com.squareup.retrofit:retrofit:1.6.0")
-    compile("commons-io:commons-io:2.4")
-    
-    compile("com.github.davidmarquis:fluent-interface-proxy:1.3.0")
-    compile(":mobilecloud.handin:1.0.0")
-    compile(":video.up.test:1.0.0")
-    compile(":autograder.handin:1.0.0")
-    compile(":autograder.spec:1.0.0")
-    
-    testCompile("junit:junit")
+	
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '5.0'
+test {
+	useJUnitPlatform()
 }

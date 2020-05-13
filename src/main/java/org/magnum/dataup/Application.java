@@ -21,10 +21,11 @@ import javax.servlet.MultipartConfigElement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.MultiPartConfigFactory;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.unit.DataSize;
 
 // This annotation tells Spring to auto-wire your application
 @EnableAutoConfiguration
@@ -37,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Application {
 
-	private static final String MAX_REQUEST_SIZE = "150MB";
+	private static final int MAX_REQUEST_SIZE_IN_MB = 150;
 
 	// The entry point to the application.
 	public static void main(String[] args) {
@@ -52,11 +53,11 @@ public class Application {
 	@Bean
     public MultipartConfigElement multipartConfigElement() {
 		// Setup the application container to be accept multipart requests
-		final MultiPartConfigFactory factory = new MultiPartConfigFactory();
+		final MultipartConfigFactory factory = new MultipartConfigFactory();
 		// Place upper bounds on the size of the requests to ensure that
 		// clients don't abuse the web container by sending huge requests
-		factory.setMaxFileSize(MAX_REQUEST_SIZE);
-		factory.setMaxRequestSize(MAX_REQUEST_SIZE);
+		factory.setMaxFileSize(DataSize.ofMegabytes(MAX_REQUEST_SIZE_IN_MB));
+		factory.setMaxRequestSize(DataSize.ofMegabytes(MAX_REQUEST_SIZE_IN_MB));
 
 		// Return the configuration to setup multipart in the container
 		return factory.createMultipartConfig();
