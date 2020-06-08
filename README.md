@@ -185,7 +185,7 @@ official grade.
 
     // You would need some Controller method to call this...
   	public void saveSomeVideo(Video v, MultipartFile videoData) throws IOException {
-  	     videoDataMgr.saveVideoData(video, videoData.getInputStream());
+  	     videoDataMgr.saveVideoData(v, videoData.getInputStream());
   	}
   	
   	public void serveSomeVideo(Video v, HttpServletResponse response) throws IOException {
