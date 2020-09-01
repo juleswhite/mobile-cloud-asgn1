@@ -17,13 +17,13 @@
  */
 package org.magnum.dataup;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping(value = "/video")
-public class AnEmptyController {
+public class ControllerClass {
 
 	/**
 	 * You will need to create one or more Spring controllers to fulfill the
@@ -42,9 +42,6 @@ public class AnEmptyController {
 	 * 
 	 */
 
-	@GetMapping
-	public String getEmptyMessage(){
-		return "Validate the firstMethod!";
-	}
+	
 	
 }
