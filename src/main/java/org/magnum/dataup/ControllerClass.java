@@ -17,13 +17,25 @@
  */
 package org.magnum.dataup;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.magnum.dataup.model.Video;
+import org.magnum.dataup.model.VideoStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import retrofit.client.Response;
+import retrofit.http.Body;
+import retrofit.mime.TypedFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@RequestMapping(value = "/video")
-public class ControllerClass {
+//@RequestMapping(value = "/video")
+public class ControllerClass implements VideoSvcApi{
 
 	/**
 	 * You will need to create one or more Spring controllers to fulfill the
@@ -42,6 +54,69 @@ public class ControllerClass {
 	 * 
 	 */
 
-	
-	
+	private String getDataUrl(long videoId){
+		String url = getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
+		return url;
+	}
+
+	private String getUrlBaseForLocalServer() {
+		HttpServletRequest request =
+				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String base =
+				"http://"+request.getServerName()
+						+ ((request.getServerPort() != 80) ? ":"+request.getServerPort() : "");
+		return base;
+	}
+
+	private static final AtomicLong currentId = new AtomicLong(0L);
+
+	private Map<Long,Video> videos = new HashMap<Long, Video>();
+
+	public Video save(Video entity) {
+		checkAndSetId(entity);
+		videos.put(entity.getId(), entity);
+		return entity;
+	}
+
+	private void checkAndSetId(Video entity) {
+		if(entity.getId() == 0){
+			entity.setId(currentId.incrementAndGet());
+		}
+	}
+
+	@Override
+	public Collection<Video> getVideoList() {
+		return null;
+	}
+
+
+	@Override
+	@RequestMapping(value = VIDEO_SVC_PATH,method = RequestMethod.POST)
+	public @ResponseBody Video addVideo(@RequestBody Video v) {
+
+		Video video1 = new Video();
+		video1.setId(v.getId());
+		video1.setTitle(v.getTitle());
+		video1.setDuration(v.getDuration());
+		video1.setContentType(v.getContentType());
+		video1.setLocation(v.getLocation());
+		video1.setSubject(v.getSubject());
+
+		video1 = save(video1);
+		video1.setDataUrl(getUrlBaseForLocalServer());
+
+		//System.out.println(video1.getDataUrl() + " - " + video1.getId() + " - " + video1.getTitle());
+
+		return video1;
+	}
+
+	@Override
+	public VideoStatus setVideoData(long id, TypedFile videoData) {
+		return null;
+	}
+
+	@Override
+	public Response getData(long id) {
+		return null;
+	}
 }
