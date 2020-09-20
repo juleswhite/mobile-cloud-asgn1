@@ -17,10 +17,26 @@
  */
 package org.magnum.dataup;
 
+import org.magnum.dataup.model.Video;
+import org.magnum.dataup.model.VideoStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
+import retrofit.http.Multipart;
 
-@Controller
-public class AnEmptyController {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+@RestController
+public class VedioController {
 
 	/**
 	 * You will need to create one or more Spring controllers to fulfill the
@@ -38,5 +54,84 @@ public class AnEmptyController {
                                                                                                                                                                                                                                                                         
 	 * 
 	 */
-	
+
+	List<Video> videos = new ArrayList<>();
+
+	private static final AtomicLong id = new AtomicLong(0L);
+
+	private VideoFileManager videoFileManager;
+
+
+
+	public VedioController() throws IOException {
+	}
+
+	private String getDataUrl(long videoId){
+		String url = getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
+		return url;
+	}
+
+	private String getUrlBaseForLocalServer() {
+		HttpServletRequest request =
+				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String base =
+				"http://"+request.getServerName()
+						+ ((request.getServerPort() != 80) ? ":"+request.getServerPort() : "");
+		return base;
+	}
+
+	@GetMapping("/video")
+	public ResponseEntity<List<Video>> GetVideo(){
+		return new ResponseEntity<>(videos, HttpStatus.OK);
+	}
+
+	@PostMapping("/video")
+	public ResponseEntity<Video> PostVideo(@RequestBody Video v){
+		v.setId(id.incrementAndGet());
+		v.setDataUrl(getDataUrl(v.getId()));
+		videos.add(v);
+		return new ResponseEntity<>(v, HttpStatus.OK);
+	}
+
+	@PostMapping("/video/{id}/data")
+	@Multipart
+	public ResponseEntity<VideoStatus> PostVideoData(@PathVariable("id") long id, @RequestParam("data")
+	MultipartFile videoData ) throws IOException {
+		String url = null;
+		Video video = null;
+		for(Video v: videos){
+			if(v.getId() == id){
+				url = v.getDataUrl();
+				video = v;
+			}
+		}
+		if(url == null){
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		else{
+			videoFileManager = VideoFileManager.get();
+			videoFileManager.saveVideoData(video, videoData.getInputStream());
+			return new ResponseEntity<>(new VideoStatus(VideoStatus.VideoState.READY), HttpStatus.OK);
+		}
+	}
+
+	@GetMapping("video/{id}/data")
+	@Multipart
+	public ResponseEntity<Video> GetVideoData(@PathVariable("id")long id, HttpServletResponse response) throws IOException {
+		Video video = null;
+		for(Video v: videos){
+			if(v.getId() == id){
+				video = v;
+			}
+		}
+		if(video == null){
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		else{
+			videoFileManager = VideoFileManager.get();
+			videoFileManager.copyVideoData(video, response.getOutputStream());
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		}
+	}
+
 }
