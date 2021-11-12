@@ -12,3 +12,5 @@ gradlew.bat
 videos
 bin
 build
+.idea
+out
