@@ -5,6 +5,8 @@ import org.magnum.dataup.model.Video;
 import org.magnum.dataup.model.VideoStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -39,40 +41,64 @@ public class VideoController {
 
     @RequestMapping(value = "/video", method = GET)
     public @ResponseBody
-    List<Video> getSavedVideos() {
-        return new ArrayList<>(videos.values());
+    ResponseEntity<List<Video>> getSavedVideos() {
+        try {
+            return new ResponseEntity<>(new ArrayList<>(videos.values()), HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            //ex.printStackTrace();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/video", method = POST)
     public @ResponseBody
-    Video postVideoMetaData(@RequestBody Video video) {
-        video.setDataUrl(getDataUrl(video.getId()));
-        return save(video);
+    ResponseEntity<Video> postVideoMetaData(@RequestBody Video video) {
+        try {
+            video.setDataUrl(getDataUrl(video.getId()));
+            return new ResponseEntity<>(save(video), HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            //ex.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/video/{id}/data", method = POST)
     public @ResponseBody
-    VideoStatus postVideoFile(@PathVariable("id") long id,
-                              @RequestParam("data") MultipartFile videoData,
-                              HttpServletResponse response) throws IOException {
-        if (videos.get(id) != null) {
-            videoFileManager.saveVideoData(videos.get(id), videoData.getInputStream());
-            return new VideoStatus(VideoStatus.VideoState.READY);
+    ResponseEntity<VideoStatus> postVideoFile(@PathVariable("id") long id,
+                                              @RequestParam("data") MultipartFile videoData,
+                                              HttpServletResponse response) {
+        try {
+            if (videos.get(id) != null) {
+                videoFileManager.saveVideoData(videos.get(id), videoData.getInputStream());
+                return new ResponseEntity<>(new VideoStatus(VideoStatus.VideoState.READY), HttpStatus.ACCEPTED);
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            //ex.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.setStatus(404);
-        return null;
     }
 
 
     @RequestMapping(value = "/video/{id}/data", method = GET)
     public @ResponseBody
     void streamVideoFile(@PathVariable("id") long id,
-                         HttpServletResponse response) throws IOException {
-        if (videos.get(id) != null) {
-            //we simply write to the output stream, we do not return any object as response
-            videoFileManager.copyVideoData(videos.get(id), response.getOutputStream());
-        } else {
-            response.setStatus(404);
+                         HttpServletResponse response) {
+        try {
+            if (videos.get(id) != null) {
+                //we simply write to the output stream, we do not return any object as response
+                videoFileManager.copyVideoData(videos.get(id), response.getOutputStream());
+                response.setStatus(HttpStatus.ACCEPTED.value());
+            } else {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+            }
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            //ex.printStackTrace();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
