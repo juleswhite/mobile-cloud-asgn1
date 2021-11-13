@@ -77,20 +77,17 @@ public class VideoController {
     }
 
     private String getDataUrl(long videoId) {
-        String url = getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
-        return url;
+        return getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
     }
 
     private String getUrlBaseForLocalServer() {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String base =
-                "http://" + request.getServerName()
-                        + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
-        return base;
+        return "http://" + request.getServerName()
+                + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
     }
 
-    public Video save(Video entity) {
+    private Video save(Video entity) {
         checkAndSetId(entity);
         videos.put(entity.getId(), entity);
         return entity;
