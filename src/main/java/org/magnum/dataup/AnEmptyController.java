@@ -18,6 +18,8 @@
 package org.magnum.dataup;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AnEmptyController {
@@ -38,5 +40,22 @@ public class AnEmptyController {
                                                                                                                                                                                                                                                                         
 	 * 
 	 */
+
+	@ResponseBody
+	@RequestMapping("/video")
+	public String [] ReturnVideos()
+	{
+		String [] vids = {"34", "34","76", "798"};
+		return  vids;
+	}
+
+	// Annotation
+
+	@ResponseBody
+	@RequestMapping("/hello")
+	public String helloWorld()
+	{
+		return "Hello World!";
+	}
 	
 }
